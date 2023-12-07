@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .iluminize import IluminizeController
+from .controller import IluminizeController
 from .const import CONF_TYPE, CONF_TYPE_RGBW, CONF_TYPE_RGB, CONF_TYPE_W, CONF_SENDER, DOMAIN, MANUFACTURER, MODEL, LOGGER, DEFAULT_NAME_RGB, DEFAULT_NAME_WHITE, CONF_MAX_RGB, CONF_MAX_W, CONF_NAME_DEFAULT, CONF_PORT_DEFAULT, CONF_MAX_W_DEFAULT, CONF_MAX_RGB_DEFAULT
 
 import voluptuous as vol

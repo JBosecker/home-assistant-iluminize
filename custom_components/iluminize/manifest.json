@@ -3,8 +3,9 @@
   "name": "Iluminize",
   "codeowners": [],
   "config_flow": true,
-  "documentation": "https://www.home-assistant.io/integrations/iluminize",
+  "documentation": "https://github.com/JBosecker/home-assistant-iluminize",
   "iot_class": "local_polling",
+  "loggers": ["iluminize"],
   "requirements": [],
   "version": "0.0.1"
 }
