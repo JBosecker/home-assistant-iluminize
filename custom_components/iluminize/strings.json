@@ -1,0 +1,37 @@
+{
+  "title": "Iluminize LED Controller",
+  "config": {
+    "step": {
+      "manual": {
+        "title": "Configure your Iluminize controller",
+        "data": {
+          "host": "[%key:common::config_flow::data::host%]",
+          "port": "[%key:common::config_flow::data::port%]",
+          "sender": "Sender ID",
+          "type": "Type",
+          "name": "[%key:common::config_flow::data::name%]"
+        }
+      }
+    },
+    "options": {
+      "step": {
+        "init": {
+          "title": "Tune your Iluminize controller",
+          "data": {
+            "max_w": "Maximum white value",
+            "max_rgb": "Maximum RGB value"
+          }
+        }
+      },
+    },
+    "error": {
+        "invalid_sender_format": "Invalid format. Must be like AABBCC.",
+        "invalid_max_rgb_format": "Invalid format. Must be like FFFFFF.",
+        "invalid_max_w_format": "Invalid format. Must be like FF."
+    },
+    "abort": {
+        "already_configured": "Device is already configured"
+    },
+    "progress": {}
+  }
+}
