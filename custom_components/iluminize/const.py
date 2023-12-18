@@ -27,6 +27,9 @@ CONF_MAX_W_REGEX = "^([0-9a-fA-F]{2})$"
 DEFAULT_NAME_RGB = "Color"
 DEFAULT_NAME_WHITE = "White"
 
+ATTR_SAVED_BRIGHTNESS = "saved_brightness"
+ATTR_SAVED_RGB_COLOR = "saved_rgb_color"
+
 PLATFORMS = [
     Platform.LIGHT
 ]

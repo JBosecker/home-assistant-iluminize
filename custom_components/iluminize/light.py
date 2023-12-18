@@ -4,7 +4,8 @@ from __future__ import annotations
 from typing import Any
 
 from .controller import IluminizeController
-from .const import CONF_TYPE, CONF_TYPE_RGBW, CONF_TYPE_RGB, CONF_TYPE_W, CONF_SENDER, DOMAIN, MANUFACTURER, MODEL, LOGGER, DEFAULT_NAME_RGB, DEFAULT_NAME_WHITE, CONF_MAX_RGB, CONF_MAX_W, CONF_NAME_DEFAULT, CONF_PORT_DEFAULT, CONF_MAX_W_DEFAULT, CONF_MAX_RGB_DEFAULT
+from .const import CONF_TYPE, CONF_TYPE_RGBW, CONF_TYPE_RGB, CONF_TYPE_W, CONF_SENDER, DOMAIN, MANUFACTURER, MODEL, LOGGER, DEFAULT_NAME_RGB, DEFAULT_NAME_WHITE, CONF_MAX_RGB, CONF_MAX_W, CONF_NAME_DEFAULT, CONF_PORT_DEFAULT, CONF_MAX_W_DEFAULT, CONF_MAX_RGB_DEFAULT, ATTR_SAVED_BRIGHTNESS, ATTR_SAVED_RGB_COLOR
+
 
 import voluptuous as vol
 
@@ -82,19 +83,17 @@ class IluminizeWhiteLight(RestoreEntity, LightEntity):
         """Call when entity about to be added to hass."""
         # If not None, we got an initial value.
         await super().async_added_to_hass()
-        if hasattr(self, '_attr_is_on') and self._attr_is_on is not None:
-            return
 
-        if (state := await self.async_get_last_state()) is not None:
-            self._attr_is_on = state.state == STATE_ON
-            
-            if brightness := state.attributes.get(ATTR_BRIGHTNESS):
-                self._attr_brightness = int(brightness)
-            else:
-                self._attr_brightness = 50
-        else:
-            self._attr_brightness = 50
-            self._attr_is_on = False
+        is_on = False
+        brightness = 127
+        
+        state = await self.async_get_last_state()
+        if state is not None:
+            is_on = state.state == STATE_ON
+            brightness = state.attributes.get(ATTR_SAVED_BRIGHTNESS) or brightness
+
+        self._attr_brightness = brightness
+        self._attr_is_on = is_on
 
     @property
     def name(self):
@@ -112,6 +111,13 @@ class IluminizeWhiteLight(RestoreEntity, LightEntity):
             manufacturer=MANUFACTURER,
             model=MODEL,
         )
+        
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return attributes of the light."""
+        return {
+            ATTR_SAVED_BRIGHTNESS: self._attr_brightness,
+        }
 
     def turn_on(self, **kwargs: Any) -> None:
         """Instruct the light to turn on."""
@@ -158,26 +164,20 @@ class IluminizeRGBLight(RestoreEntity, LightEntity):
         """Call when entity about to be added to hass."""
         # If not None, we got an initial value.
         await super().async_added_to_hass()
-        if hasattr(self, '_attr_is_on') and self._attr_is_on is not None:
-            return
+        
+        is_on = False
+        brightness = 127
+        rgb_color = (255, 255, 255)
+        
+        state = await self.async_get_last_state()
+        if state is not None:
+            is_on = state.state == STATE_ON
+            brightness = state.attributes.get(ATTR_SAVED_BRIGHTNESS) or brightness
+            rgb_color = state.attributes.get(ATTR_SAVED_RGB_COLOR) or rgb_color
 
-        if (state := await self.async_get_last_state()) is not None:
-            self._attr_is_on = state.state == STATE_ON
-            
-            if rgb := state.attributes.get(ATTR_RGB_COLOR):
-                self._attr_rgb_color = rgb
-            else:
-                self._attr_rgb_color = (255, 255, 255)
-                
-            if brightness := state.attributes.get(ATTR_BRIGHTNESS):
-                self._attr_brightness = brightness
-            else:
-                self._attr_brightness = 50
-
-        else:
-            self._attr_brightness = 50
-            self._attr_rgb_color = (255, 255, 255)
-            self._attr_is_on = False
+        self._attr_rgb_color = rgb_color
+        self._attr_brightness = brightness
+        self._attr_is_on = is_on
 
     @property
     def name(self):
@@ -195,6 +195,14 @@ class IluminizeRGBLight(RestoreEntity, LightEntity):
             manufacturer=MANUFACTURER,
             model=MODEL,
         )
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return attributes of the light."""
+        return {
+            ATTR_SAVED_BRIGHTNESS: self._attr_brightness,
+            ATTR_SAVED_RGB_COLOR: self._attr_rgb_color,
+        }
 
     def turn_on(self, **kwargs: Any) -> None:
         """Instruct the light to turn on."""
