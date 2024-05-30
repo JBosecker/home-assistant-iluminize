@@ -124,13 +124,13 @@ class IluminizeWhiteLight(RestoreEntity, LightEntity):
         self._attr_is_on = True
         self._attr_brightness = kwargs.get(ATTR_BRIGHTNESS, self._attr_brightness)
         self._set_white(self._attr_brightness)
-        self.async_write_ha_state()
+        self.schedule_update_ha_state()
 
     def turn_off(self, **kwargs: Any) -> None:
         """Instruct the light to turn off."""
         self._attr_is_on = False
         self._set_white(0)
-        self.async_write_ha_state()
+        self.schedule_update_ha_state()
 
     def _set_white(self, brightness) -> None:
         max_w = int(self._max_w, 16)
@@ -217,14 +217,14 @@ class IluminizeRGBLight(RestoreEntity, LightEntity):
         blue = blue / 255 * brightness
 
         self._set_rgb((red, green, blue))
-        self.async_write_ha_state()
+        self.schedule_update_ha_state()
 
 
     def turn_off(self, **kwargs: Any) -> None:
         """Instruct the light to turn off."""
         self._attr_is_on = False
         self._set_rgb((0, 0, 0))
-        self.async_write_ha_state()
+        self.schedule_update_ha_state()
     
     def _set_rgb(self, rgb) -> None:
         max_rgb = self._max_rgb
